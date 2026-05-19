@@ -1,0 +1,27 @@
+name: Build macOS App
+
+on: [push]
+
+jobs:
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install & Build
+        run: |
+          python -m venv .venv
+          source .venv/bin/activate
+          pip install PyQt6 matplotlib numpy scipy pyinstaller
+          pyinstaller --onedir --windowed --name SignalSimulationSuite signal_simulator.py
+
+      - name: Upload .app
+        uses: actions/upload-artifact@v3
+        with:
+          name: SignalSimulationSuite-macOS
+          path: dist/SignalSimulationSuite.app
